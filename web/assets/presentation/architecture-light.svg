@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="648" viewBox="0 0 1200 648" role="img" aria-label="Hunkwise 架构：git diff 进入 src/diff.ts、probes.ts、server/workbench、attestation.ts、gate.ts 与 pre-push，中间写 diff.json、probes.json、answers.json 和 attestations/&lt;head&gt;.json" data-palette="dce656-9ce76a-f6e0ac-5e58edbd6e33">
+<style>
+    text{font-family:-apple-system,'Segoe UI','PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif}
+    .mono{font-family:'SF Mono','JetBrains Mono','Cascadia Code',ui-monospace,Menlo,Consolas,monospace}
+    .flow{stroke-dasharray:5 7;animation:march 1.9s linear infinite}
+    .flow-slow{stroke-dasharray:4 8;animation:march 3.6s linear infinite}
+    .drift1{animation:drift1 12s ease-in-out infinite alternate}
+    .drift2{animation:drift2 15s ease-in-out infinite alternate}
+    .pulse{animation:pulse 3s ease-in-out infinite}
+    .pulse2{animation:pulse 4.4s ease-in-out infinite}
+    .blink{animation:blink 2.8s steps(2,jump-none) infinite}
+    @keyframes march{to{stroke-dashoffset:-24}}
+    @keyframes drift1{from{transform:translate(0,0)}to{transform:translate(11px,-15px)}}
+    @keyframes drift2{from{transform:translate(0,0)}to{transform:translate(-13px,11px)}}
+    @keyframes pulse{0%,100%{opacity:.32}50%{opacity:1}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+    @media (prefers-reduced-motion: reduce){*{animation:none !important}}</style>
+<defs>
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="5" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <radialGradient id="halo" cx="50%" cy="46%" r="64%">
+    <stop offset="0%" stop-color="#74792d" stop-opacity="0.14"/>
+    <stop offset="55%" stop-color="#57803b" stop-opacity="0.05"/>
+    <stop offset="100%" stop-color="#fefef9" stop-opacity="0"/>
+  </radialGradient>
+  <marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#74792d"/>
+  </marker>
+  <marker id="arwm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#6e7869"/>
+  </marker>
+</defs>
+<rect width="1200" height="648" fill="#fefef9"/>
+<rect width="1200" height="648" fill="url(#halo)"/>
+<g opacity="0.55"><line x1="60" y1="0" x2="60" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="120" y1="0" x2="120" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="180" y1="0" x2="180" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="240" y1="0" x2="240" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="300" y1="0" x2="300" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="360" y1="0" x2="360" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="420" y1="0" x2="420" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="480" y1="0" x2="480" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="540" y1="0" x2="540" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="600" y1="0" x2="600" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="660" y1="0" x2="660" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="720" y1="0" x2="720" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="780" y1="0" x2="780" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="840" y1="0" x2="840" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="900" y1="0" x2="900" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="960" y1="0" x2="960" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="1020" y1="0" x2="1020" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="1080" y1="0" x2="1080" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="1140" y1="0" x2="1140" y2="648" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="60" x2="1200" y2="60" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="120" x2="1200" y2="120" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="180" x2="1200" y2="180" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="240" x2="1200" y2="240" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="300" x2="1200" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="360" x2="1200" y2="360" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="420" x2="1200" y2="420" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="480" x2="1200" y2="480" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="540" x2="1200" y2="540" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="600" x2="1200" y2="600" stroke="#f4f7cb" stroke-width="0.6"/></g>
+
+  <text x="40" y="48" font-size="24" font-weight="650" fill="#262a1c">架构 <tspan font-size="15" fill="#6e7869">· 一个 Node 进程，几次只读的 git 子进程调用</tspan></text>
+  <rect x="40" y="78" width="1120" height="42" rx="9" fill="#fdfdf3" stroke="#f4f7cb"/>
+  <text x="58" y="104" class="mono" font-size="12.5" fill="#6e7869">src/cli.ts — 只做参数解析与输出：init · diff · probes · review · status · attest · verify · verify-push · install-hook</text>
+  <text x="40" y="152" class="mono" font-size="11" fill="#74792d" letter-spacing="1">GIT（只读）</text>
+  <text x="226" y="152" class="mono" font-size="11" fill="#74792d" letter-spacing="1">NODE 进程</text>
+  <text x="40" y="356" class="mono" font-size="11" fill="#74792d" letter-spacing="1">.hunkwise/ · 扁平 JSON</text>
+<line x1="301" y1="120" x2="301" y2="178" stroke="#6e7869" stroke-width="0.8" stroke-dasharray="2 5" opacity="0.7"/><line x1="497" y1="120" x2="497" y2="178" stroke="#6e7869" stroke-width="0.8" stroke-dasharray="2 5" opacity="0.7"/><line x1="693" y1="120" x2="693" y2="178" stroke="#6e7869" stroke-width="0.8" stroke-dasharray="2 5" opacity="0.7"/><line x1="889" y1="120" x2="889" y2="178" stroke="#6e7869" stroke-width="0.8" stroke-dasharray="2 5" opacity="0.7"/><line x1="1085" y1="120" x2="1085" y2="178" stroke="#6e7869" stroke-width="0.8" stroke-dasharray="2 5" opacity="0.7"/>
+  <rect x="40" y="180" width="150" height="92" rx="10" fill="#fdfdf3" stroke="#f4f7cb"/>
+  <text x="56" y="208" class="mono" font-size="14" fill="#262a1c">git diff -U0</text>
+  <text x="56" y="228" class="mono" font-size="11.5" fill="#6e7869">&lt;base&gt;...HEAD</text>
+  <text x="56" y="250" font-size="11.5" fill="#6e7869">只读子进程</text>
+  <path d="M 190 226 L 220 226" stroke="#74792d" stroke-width="1.8" marker-end="url(#arw)" class="flow"/>
+<rect x="226" y="180" width="150" height="92" rx="10" fill="#fdfef7" stroke="#f4f7cb" stroke-width="1"/>
+  <text x="240" y="206" class="mono" font-size="14.5" fill="#262a1c">src/diff.ts</text>
+  <text x="240" y="228" font-size="11.5" fill="#6e7869">片段 · 事实 · 指纹</text>
+  <text x="240" y="246" class="mono" font-size="11" fill="#6e7869">extractFacts</text>
+  <text x="240" y="263" font-size="11.5" fill="#6e7869">8 种豁免原因</text><path d="M 376 226 L 418 226" stroke="#74792d" stroke-width="1.6" marker-end="url(#arw)" class="flow"/><line x1="301" y1="272" x2="301" y2="286" stroke="#6e7869" stroke-width="0.9" stroke-dasharray="2 4"/>
+  <rect x="226" y="286" width="150" height="30" rx="7" fill="#fdfdf3" stroke="#f4f7cb"/>
+  <text x="301" y="305" text-anchor="middle" class="mono" font-size="11" fill="#74792d">.hunkwise/diff.json</text><rect x="422" y="180" width="150" height="92" rx="10" fill="#fdfef7" stroke="#f4f7cb" stroke-width="1"/>
+  <text x="436" y="206" class="mono" font-size="14.5" fill="#262a1c">src/probes.ts</text>
+  <text x="436" y="228" font-size="11.5" fill="#6e7869">每片段 1–3 道题</text>
+  <text x="436" y="246" class="mono" font-size="11" fill="#6e7869">兄弟片段当干扰项</text>
+  <text x="436" y="263" font-size="11.5" fill="#6e7869">指纹种子洗牌</text><path d="M 572 226 L 614 226" stroke="#74792d" stroke-width="1.6" marker-end="url(#arw)" class="flow"/><line x1="497" y1="272" x2="497" y2="286" stroke="#6e7869" stroke-width="0.9" stroke-dasharray="2 4"/>
+  <rect x="422" y="286" width="150" height="30" rx="7" fill="#fdfdf3" stroke="#f4f7cb"/>
+  <text x="497" y="305" text-anchor="middle" class="mono" font-size="11" fill="#74792d">.hunkwise/probes.json</text><rect x="618" y="180" width="150" height="92" rx="10" fill="#fdfef7" stroke="#f4f7cb" stroke-width="1"/>
+  <text x="632" y="206" class="mono" font-size="14.5" fill="#262a1c">src/server.ts</text>
+  <text x="632" y="228" font-size="11.5" fill="#6e7869">只绑 127.0.0.1</text>
+  <text x="632" y="246" class="mono" font-size="11" fill="#6e7869">src/ui/workbench.html</text>
+  <text x="632" y="263" font-size="11.5" fill="#6e7869">POST /api/answer</text><path d="M 768 226 L 810 226" stroke="#74792d" stroke-width="1.6" marker-end="url(#arw)" class="flow"/><line x1="693" y1="272" x2="693" y2="286" stroke="#6e7869" stroke-width="0.9" stroke-dasharray="2 4"/>
+  <rect x="618" y="286" width="150" height="30" rx="7" fill="#fdfdf3" stroke="#f4f7cb"/>
+  <text x="693" y="305" text-anchor="middle" class="mono" font-size="11" fill="#74792d">.hunkwise/answers.json</text><rect x="814" y="180" width="150" height="92" rx="10" fill="#fdfef7" stroke="#f4f7cb" stroke-width="1"/>
+  <text x="828" y="206" class="mono" font-size="14.5" fill="#262a1c">src/attestation.ts</text>
+  <text x="828" y="228" font-size="11.5" fill="#6e7869">zod · 覆盖率 · HMAC</text>
+  <text x="828" y="246" class="mono" font-size="11" fill="#6e7869">唯一写存证的地方</text>
+  <text x="828" y="263" font-size="11.5" fill="#6e7869">grade() 共用</text><path d="M 964 226 L 1006 226" stroke="#74792d" stroke-width="1.6" marker-end="url(#arw)" class="flow"/><line x1="889" y1="272" x2="889" y2="286" stroke="#6e7869" stroke-width="0.9" stroke-dasharray="2 4"/>
+  <rect x="802" y="286" width="174" height="42" rx="7" fill="#fdfdf3" stroke="#f4f7cb"/>
+  <text x="889" y="303" text-anchor="middle" class="mono" font-size="11" fill="#74792d">.hunkwise/attestations/</text>
+  <text x="889" y="319" text-anchor="middle" class="mono" font-size="11" fill="#74792d">&lt;head&gt;.json</text><rect x="1010" y="180" width="150" height="92" rx="10" fill="#fdfef7" stroke="#74792d" stroke-width="1.7"/>
+  <text x="1024" y="206" class="mono" font-size="14.5" fill="#262a1c">src/gate.ts</text>
+  <text x="1024" y="228" font-size="11.5" fill="#6e7869">重算 diff 与答案键</text>
+  <text x="1024" y="246" class="mono" font-size="11" fill="#6e7869">不读 probes.json</text>
+  <text x="1024" y="263" font-size="11.5" fill="#6e7869">verify · exit 0 / 1</text>
+  <path d="M 1085 272 L 1085 372" stroke="#74792d" stroke-width="1.6" stroke-dasharray="4 6" class="flow-slow"/>
+  <rect x="1000" y="372" width="160" height="82" rx="10" fill="#fdfef7" stroke="#74792d" stroke-width="1.7"/>
+  <text x="1016" y="398" class="mono" font-size="14" fill="#262a1c">pre-push hook</text>
+  <text x="1016" y="418" font-size="11.5" fill="#6e7869">verify-push 逐个 commit</text>
+  <text x="1016" y="440" class="mono" font-size="11" fill="#74792d">.git/hooks/pre-push</text>
+  <text x="1000" y="470" font-size="11" fill="#6e7869">install-hook 写它</text>
+  <rect x="40" y="372" width="920" height="88" rx="10" fill="#fdfef7" stroke="#f4f7cb"/>
+  <text x="64" y="402" font-size="15" fill="#262a1c">没有数据库，没有守护进程，没有账号，没有网络调用。</text>
+  <text x="64" y="426" font-size="12.5" fill="#6e7869">全部状态是 .hunkwise/ 下的扁平 JSON；init 把这个目录写进 .gitignore，所以 key 与答案不随分支走。换台机器要重新 init。</text>
+  <text x="64" y="447" font-size="12.5" fill="#6e7869">gate 不信任记录：每次都从分支重算 diff、重新出题、重新判分，再比对 diff_sha256、片段指纹与 HMAC 摘要。</text>
+  <g class="mono" font-size="11" fill="#6e7869">
+    <line x1="40" y1="500" x2="74" y2="500" stroke="#74792d" stroke-width="1.6" class="flow"/><text x="84" y="504">数据流</text>
+    <line x1="180" y1="500" x2="214" y2="500" stroke="#6e7869" stroke-width="1" stroke-dasharray="2 5"/><text x="224" y="504">调用 / 写入</text>
+    <circle cx="380" cy="500" r="4" fill="#7f7459"/><text x="392" y="504">入口 / 出口</text>
+  </g>
+  <text x="40" y="546" class="mono" font-size="11" fill="#74792d">.hunkwise/ 不进 git；存证是防篡改，不是身份归属。</text>
+</svg>

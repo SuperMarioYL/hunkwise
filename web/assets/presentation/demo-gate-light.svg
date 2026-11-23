@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="300" viewBox="0 0 760 300" role="img" aria-label="闸门结果：已评审分支 verify 退出 0；只答一半的分支退出 1 且 push 被拒绝" data-palette="dce656-9ce76a-f6e0ac-5e58edbd6e33">
+<style>
+    text{font-family:-apple-system,'Segoe UI','PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif}
+    .mono{font-family:'SF Mono','JetBrains Mono','Cascadia Code',ui-monospace,Menlo,Consolas,monospace}
+    .flow{stroke-dasharray:5 7;animation:march 1.9s linear infinite}
+    .flow-slow{stroke-dasharray:4 8;animation:march 3.6s linear infinite}
+    .drift1{animation:drift1 12s ease-in-out infinite alternate}
+    .drift2{animation:drift2 15s ease-in-out infinite alternate}
+    .pulse{animation:pulse 3s ease-in-out infinite}
+    .pulse2{animation:pulse 4.4s ease-in-out infinite}
+    .blink{animation:blink 2.8s steps(2,jump-none) infinite}
+    @keyframes march{to{stroke-dashoffset:-24}}
+    @keyframes drift1{from{transform:translate(0,0)}to{transform:translate(11px,-15px)}}
+    @keyframes drift2{from{transform:translate(0,0)}to{transform:translate(-13px,11px)}}
+    @keyframes pulse{0%,100%{opacity:.32}50%{opacity:1}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+    @media (prefers-reduced-motion: reduce){*{animation:none !important}}</style>
+<defs>
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="5" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <radialGradient id="halo" cx="50%" cy="46%" r="64%">
+    <stop offset="0%" stop-color="#74792d" stop-opacity="0.14"/>
+    <stop offset="55%" stop-color="#57803b" stop-opacity="0.05"/>
+    <stop offset="100%" stop-color="#fefef9" stop-opacity="0"/>
+  </radialGradient>
+  <marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#74792d"/>
+  </marker>
+  <marker id="arwm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#6e7869"/>
+  </marker>
+</defs>
+<rect width="760" height="300" fill="#fefef9"/>
+<rect width="760" height="300" fill="url(#halo)"/>
+<g opacity="0.55"><line x1="60" y1="0" x2="60" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="120" y1="0" x2="120" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="180" y1="0" x2="180" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="240" y1="0" x2="240" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="300" y1="0" x2="300" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="360" y1="0" x2="360" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="420" y1="0" x2="420" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="480" y1="0" x2="480" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="540" y1="0" x2="540" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="600" y1="0" x2="600" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="660" y1="0" x2="660" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="720" y1="0" x2="720" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="60" x2="760" y2="60" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="120" x2="760" y2="120" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="180" x2="760" y2="180" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="240" x2="760" y2="240" stroke="#f4f7cb" stroke-width="0.6"/></g>
+
+  <rect x="1" y="1" width="758" height="298" rx="14" fill="#fdfef7" stroke="#f4f7cb"/>
+  <circle cx="28" cy="28" r="4" fill="#74792d"/><circle cx="44" cy="28" r="4" fill="#57803b"/><circle cx="60" cy="28" r="4" fill="#6e7869"/>
+  <text x="80" y="33" class="mono" font-size="13" fill="#6e7869">$ npx hunkwise verify · git push</text>
+  
+  <rect x="24" y="60" width="712" height="86" rx="10" fill="#fdfdf3" stroke="#74792d" stroke-width="1"/>
+  <text x="44" y="88" class="mono" font-size="14" fill="#262a1c">agent/checkout</text>
+  <text x="44" y="112" class="mono" font-size="12" fill="#6e7869">3f79732815f8 · 6 hunks · 3 exempt · 4 probes</text>
+  <rect x="536" y="78" width="180" height="34" rx="17" fill="#fdfef7" stroke="#74792d"/>
+  <text x="626" y="100" text-anchor="middle" class="mono" font-size="13" fill="#74792d">verify exit 0</text>
+  <text x="44" y="136" font-size="12.5" fill="#6e7869">3/3 非豁免片段全部 covered</text>
+
+  <rect x="24" y="160" width="712" height="86" rx="10" fill="#fdfdf3" stroke="#f4f7cb"/>
+  <text x="44" y="188" class="mono" font-size="14" fill="#262a1c">agent/checkout-legacy</text>
+  <text x="44" y="212" class="mono" font-size="12" fill="#6e7869">f00f1ada6a45 · 2 hunks · 1 covered · 1 uncovered</text>
+  <rect x="536" y="178" width="180" height="34" rx="17" fill="none" stroke="#57803b" stroke-dasharray="4 3"/>
+  <text x="626" y="200" text-anchor="middle" class="mono" font-size="13" fill="#57803b">verify exit 1</text>
+  <text x="44" y="237" font-size="12.5" fill="#6e7869">src/auth/errors.ts:5-5 not covered → pre-push 拒绝 push</text>
+  <text x="24" y="278" class="mono" font-size="12.5" fill="#6e7869">pre-push 逐个校验被推的 commit，不用 checkout 中的 HEAD 冒充。</text>
+</svg>

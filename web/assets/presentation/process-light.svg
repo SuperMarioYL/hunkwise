@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="528" viewBox="0 0 1200 528" role="img" aria-label="评审流程：diff、facts、probes、review 答题、attest、verify 与 pre-push；三个片段进分母并覆盖，两个 lockfile 和一个 no_fact 片段被显式豁免" data-palette="dce656-9ce76a-f6e0ac-5e58edbd6e33">
+<style>
+    text{font-family:-apple-system,'Segoe UI','PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif}
+    .mono{font-family:'SF Mono','JetBrains Mono','Cascadia Code',ui-monospace,Menlo,Consolas,monospace}
+    .flow{stroke-dasharray:5 7;animation:march 1.9s linear infinite}
+    .flow-slow{stroke-dasharray:4 8;animation:march 3.6s linear infinite}
+    .drift1{animation:drift1 12s ease-in-out infinite alternate}
+    .drift2{animation:drift2 15s ease-in-out infinite alternate}
+    .pulse{animation:pulse 3s ease-in-out infinite}
+    .pulse2{animation:pulse 4.4s ease-in-out infinite}
+    .blink{animation:blink 2.8s steps(2,jump-none) infinite}
+    @keyframes march{to{stroke-dashoffset:-24}}
+    @keyframes drift1{from{transform:translate(0,0)}to{transform:translate(11px,-15px)}}
+    @keyframes drift2{from{transform:translate(0,0)}to{transform:translate(-13px,11px)}}
+    @keyframes pulse{0%,100%{opacity:.32}50%{opacity:1}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+    @media (prefers-reduced-motion: reduce){*{animation:none !important}}</style>
+<defs>
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="5" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <radialGradient id="halo" cx="50%" cy="46%" r="64%">
+    <stop offset="0%" stop-color="#74792d" stop-opacity="0.14"/>
+    <stop offset="55%" stop-color="#57803b" stop-opacity="0.05"/>
+    <stop offset="100%" stop-color="#fefef9" stop-opacity="0"/>
+  </radialGradient>
+  <marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#74792d"/>
+  </marker>
+  <marker id="arwm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#6e7869"/>
+  </marker>
+</defs>
+<rect width="1200" height="528" fill="#fefef9"/>
+<rect width="1200" height="528" fill="url(#halo)"/>
+<g opacity="0.55"><line x1="60" y1="0" x2="60" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="120" y1="0" x2="120" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="180" y1="0" x2="180" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="240" y1="0" x2="240" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="300" y1="0" x2="300" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="360" y1="0" x2="360" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="420" y1="0" x2="420" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="480" y1="0" x2="480" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="540" y1="0" x2="540" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="600" y1="0" x2="600" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="660" y1="0" x2="660" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="720" y1="0" x2="720" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="780" y1="0" x2="780" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="840" y1="0" x2="840" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="900" y1="0" x2="900" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="960" y1="0" x2="960" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="1020" y1="0" x2="1020" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="1080" y1="0" x2="1080" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="1140" y1="0" x2="1140" y2="528" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="60" x2="1200" y2="60" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="120" x2="1200" y2="120" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="180" x2="1200" y2="180" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="240" x2="1200" y2="240" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="300" x2="1200" y2="300" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="360" x2="1200" y2="360" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="420" x2="1200" y2="420" stroke="#f4f7cb" stroke-width="0.6"/><line x1="0" y1="480" x2="1200" y2="480" stroke="#f4f7cb" stroke-width="0.6"/></g>
+
+  <text x="40" y="46" font-size="24" font-weight="650" fill="#262a1c">一次评审走的路 <tspan font-size="15" fill="#6e7869">· 片段是分母，事实是分子</tspan></text>
+  <line x1="70" y1="150" x2="1130" y2="150" stroke="#74792d" stroke-width="1.4" opacity="0.55"/>
+<path d="M 144 150 L 284 150" stroke="#74792d" stroke-width="1.6" marker-end="url(#arw)" class="flow"/><circle cx="130" cy="150" r="9" fill="#fefef9" stroke="#74792d" stroke-width="2"/>
+  <circle cx="130" cy="150" r="4" fill="#7f7459" class=""/>
+  <text x="130" y="124" text-anchor="middle" class="mono" font-size="11" fill="#6e7869">01</text>
+  <text x="130" y="184" text-anchor="middle" font-size="17" font-weight="600" fill="#262a1c">diff</text>
+  <text x="130" y="206" text-anchor="middle" font-size="12" fill="#6e7869">git diff -U0 → 片段</text><path d="M 314 150 L 454 150" stroke="#74792d" stroke-width="1.6" marker-end="url(#arw)" class="flow"/><circle cx="300" cy="150" r="9" fill="#fefef9" stroke="#74792d" stroke-width="2"/>
+  <circle cx="300" cy="150" r="4" fill="#7f7459" class=""/>
+  <text x="300" y="124" text-anchor="middle" class="mono" font-size="11" fill="#6e7869">02</text>
+  <text x="300" y="184" text-anchor="middle" font-size="17" font-weight="600" fill="#262a1c">facts</text>
+  <text x="300" y="206" text-anchor="middle" font-size="12" fill="#6e7869">四类事实 + 指纹</text><path d="M 484 150 L 624 150" stroke="#74792d" stroke-width="1.6" marker-end="url(#arw)" class="flow"/><circle cx="470" cy="150" r="9" fill="#fefef9" stroke="#74792d" stroke-width="2"/>
+  <circle cx="470" cy="150" r="4" fill="#7f7459" class=""/>
+  <text x="470" y="124" text-anchor="middle" class="mono" font-size="11" fill="#6e7869">03</text>
+  <text x="470" y="184" text-anchor="middle" font-size="17" font-weight="600" fill="#262a1c">probes</text>
+  <text x="470" y="206" text-anchor="middle" font-size="12" fill="#6e7869">每片段 1–3 题</text><path d="M 654 150 L 794 150" stroke="#74792d" stroke-width="1.6" marker-end="url(#arw)" class="flow"/><circle cx="640" cy="150" r="12" fill="#fefef9" stroke="#74792d" stroke-width="2"/>
+  <circle cx="640" cy="150" r="4" fill="#7f7459" class="pulse"/>
+  <text x="640" y="124" text-anchor="middle" class="mono" font-size="11" fill="#6e7869">04</text>
+  <text x="640" y="184" text-anchor="middle" font-size="17" font-weight="600" fill="#262a1c">review</text>
+  <text x="640" y="206" text-anchor="middle" font-size="12" fill="#6e7869">工作台答题 · 127.0.0.1</text><path d="M 824 150 L 964 150" stroke="#74792d" stroke-width="1.6" marker-end="url(#arw)" class="flow"/><circle cx="810" cy="150" r="9" fill="#fefef9" stroke="#74792d" stroke-width="2"/>
+  <circle cx="810" cy="150" r="4" fill="#7f7459" class=""/>
+  <text x="810" y="124" text-anchor="middle" class="mono" font-size="11" fill="#6e7869">05</text>
+  <text x="810" y="184" text-anchor="middle" font-size="17" font-weight="600" fill="#262a1c">attest</text>
+  <text x="810" y="206" text-anchor="middle" font-size="12" fill="#6e7869">HMAC 存证</text><circle cx="980" cy="150" r="9" fill="#fefef9" stroke="#74792d" stroke-width="2"/>
+  <circle cx="980" cy="150" r="4" fill="#7f7459" class=""/>
+  <text x="980" y="124" text-anchor="middle" class="mono" font-size="11" fill="#6e7869">06</text>
+  <text x="980" y="184" text-anchor="middle" font-size="17" font-weight="600" fill="#262a1c">verify</text>
+  <text x="980" y="206" text-anchor="middle" font-size="12" fill="#6e7869">重算 · exit 0 / 1</text>
+  <text x="40" y="252" font-size="14" fill="#262a1c">演示仓库的一轮：6 个片段 · 3 个豁免 · 3 个进分母</text>
+  <text x="40" y="272" font-size="12" fill="#6e7869">豁免由规则写明原因，不进分母，也不参与判分。</text>
+  <text x="64" y="306" class="mono" font-size="11" fill="#74792d" letter-spacing="1">进分母</text>
+<rect x="64" y="318" width="248" height="86" rx="10" fill="#fdfef7" stroke="#74792d" stroke-width="1.2"/>
+  <text x="80" y="344" class="mono" font-size="12.5" fill="#262a1c">src/api/handler.ts:5-8</text>
+  <text x="80" y="366" class="mono" font-size="11.5" fill="#57803b">new_branch</text>
+  <text x="80" y="390" font-size="12" fill="#6e7869">probe ✓  correct</text>
+  <circle cx="292" cy="384" r="6" fill="#74792d" class="pulse2"/><rect x="332" y="318" width="248" height="86" rx="10" fill="#fdfef7" stroke="#74792d" stroke-width="1.2"/>
+  <text x="348" y="344" class="mono" font-size="12.5" fill="#262a1c">src/auth/errors.ts:5-5</text>
+  <text x="348" y="366" class="mono" font-size="11.5" fill="#57803b">error_path_changed</text>
+  <text x="348" y="390" font-size="12" fill="#6e7869">probe ✓  correct</text>
+  <circle cx="560" cy="384" r="6" fill="#74792d" class="pulse2"/><rect x="600" y="318" width="248" height="86" rx="10" fill="#fdfef7" stroke="#74792d" stroke-width="1.2"/>
+  <text x="616" y="344" class="mono" font-size="12.5" fill="#262a1c">src/auth/session.ts:7-9</text>
+  <text x="616" y="366" class="mono" font-size="11.5" fill="#57803b">guard_removed</text>
+  <text x="616" y="390" font-size="12" fill="#6e7869">probe ✓  correct</text>
+  <circle cx="828" cy="384" r="6" fill="#74792d" class="pulse2"/>
+  <path d="M 470 220 L 470 300 L 440 300" stroke="#6e7869" stroke-width="1" stroke-dasharray="3 5" fill="none"/>
+  <text x="880" y="306" class="mono" font-size="11" fill="#6e7869" letter-spacing="1">不进分母 · 写明原因</text>
+<rect x="876" y="318" width="284" height="30" rx="7" fill="none" stroke="#6e7869" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="890" y="338" class="mono" font-size="11.5" fill="#6e7869">package-lock.json:12-14</text>
+  <text x="1148" y="338" text-anchor="end" class="mono" font-size="11" fill="#6e7869">lockfile</text><rect x="876" y="356" width="284" height="30" rx="7" fill="none" stroke="#6e7869" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="890" y="376" class="mono" font-size="11.5" fill="#6e7869">package-lock.json:45-47</text>
+  <text x="1148" y="376" text-anchor="end" class="mono" font-size="11" fill="#6e7869">lockfile</text><rect x="876" y="394" width="284" height="30" rx="7" fill="none" stroke="#6e7869" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="890" y="414" class="mono" font-size="11.5" fill="#6e7869">src/api/handler.ts:3-3</text>
+  <text x="1148" y="414" text-anchor="end" class="mono" font-size="11" fill="#6e7869">no_fact</text>
+  <path d="M 300 220 L 300 286 L 1018 286 L 1018 312" stroke="#6e7869" stroke-width="1" stroke-dasharray="3 5" fill="none"/>
+  <rect x="64" y="432" width="500" height="52" rx="9" fill="#fdfdf3" stroke="#f4f7cb"/>
+  <text x="82" y="454" class="mono" font-size="12.5" fill="#74792d">覆盖满了 → covered 3/3 · verify exit 0</text>
+  <text x="82" y="473" font-size="11.5" fill="#6e7869">全部探针 correct；记录与重算结果一致。</text>
+  <rect x="584" y="432" width="576" height="52" rx="9" fill="#fdfdf3" stroke="#f4f7cb"/>
+  <text x="602" y="454" class="mono" font-size="12.5" fill="#57803b">有未覆盖 → verify exit 1 · 逐条列出片段 id</text>
+  <text x="602" y="473" font-size="11.5" fill="#6e7869">例：src/auth/errors.ts:5-5  not covered；pre-push 拒绝这次 push。</text>
+  <text x="40" y="508" class="mono" font-size="11" fill="#6e7869">两次答错即锁死：片段在本次分支状态下保持未覆盖，只能改代码产生新指纹再走一遍。</text>
+</svg>

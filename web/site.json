@@ -1,0 +1,410 @@
+{
+  "schema": 3,
+  "name": "Hunkwise",
+  "github": "https://github.com/SuperMarioYL/hunkwise",
+  "host": "hunkwise.lei6393.com",
+  "palette": "auto",
+  "lang": {
+    "primary": "zh",
+    "toggle": true
+  },
+  "meta": {
+    "visual_profile": "neon-particle",
+    "demo_source": "docs/demo-results.json",
+    "implementation_version": "0.1.0"
+  },
+  "hero": {
+    "eyebrow": {
+      "zh": "本地合并闸门 · 只绑 127.0.0.1 · 状态全在 .hunkwise/",
+      "en": "Local merge gate · loopback only · all state in .hunkwise/"
+    },
+    "headline": {
+      "zh": "把「我真的看懂了」\n变成 verify 的退出码",
+      "en": "Turn \"I actually understood this\"\ninto verify's exit code"
+    },
+    "sub": {
+      "zh": "Hunkwise 把 agent 写的分支拆成片段，从 diff 里当场算出四选一的题和答案键。非豁免片段全部答对才算覆盖，verify 退出 0；有一个非豁免片段没答完，pre-push 就拒绝这次 push。判定路径上没有模型，答案键就在你的机器上，可以自己复核。",
+      "en": "Hunkwise splits an agent's branch into hunks and derives four-option questions and their answer keys from the diff itself. Every non-exempt hunk must be fully answered before verify exits 0; leave one non-exempt hunk unanswered and the pre-push hook refuses the push. No model sits on the grading path, and the answer keys stay on your machine where you can recompute them."
+    },
+    "href": "#quickstart",
+    "cta": {
+      "zh": "开始评审",
+      "en": "Start reviewing"
+    },
+    "ctaGithub": {
+      "zh": "在 GitHub 查看",
+      "en": "View on GitHub"
+    }
+  },
+  "scene": {
+    "kind": "neon-graph",
+    "fallback": "/assets/presentation/hero-static-dark.svg",
+    "fallbackLight": "/assets/presentation/hero-static-light.svg",
+    "caption": {
+      "zh": "示意场景：未覆盖的片段收敛成一道闸门",
+      "en": "Illustrative: uncovered hunks converge into one gate"
+    }
+  },
+  "advantages": [
+    {
+      "title": {
+        "zh": "答案键从 diff 里算，不经过模型",
+        "en": "Answer keys come from the diff, never a model"
+      },
+      "body": {
+        "zh": "片段里的守卫删除、错误路径变化、新分支、符号改名被文本规则识别成事实，每条事实一道四选一题（每个片段最多三道）；正确答案就是那一段的原文，干扰项来自同一分支的兄弟片段，选项顺序由片段指纹决定。所以同一份 diff 生成的 probes.json 逐字节可复现，没有模型参与出题或判分。",
+        "en": "A text rule turns a deleted guard, a changed error path, a new branch or a renamed symbol into a fact, and each fact becomes one four-option question (at most three per hunk) whose correct answer is literal text from that hunk. Distractors come from sibling hunks in the same branch and option order is seeded by the hunk fingerprint, so the same diff reproduces probes.json byte for byte. No model writes the questions or grades the answers."
+      }
+    },
+    {
+      "title": {
+        "zh": "verify 不信任缓存，每次都从分支重算",
+        "en": "verify trusts no cache; it recomputes from the branch"
+      },
+      "body": {
+        "zh": "verify 不读磁盘上的 probes.json，也不相信存证记录：它重新跑 diff、重新出题、重新判分，再比对 diff_sha256、片段指纹和 HMAC 摘要。换成别的分支、手改记录都会让它退出 1；改 probes.json 反而没有影响，因为这个文件根本不在它的输入里。",
+        "en": "verify never reads the on-disk probes.json and does not trust the sealed record: it re-runs the diff, re-derives the probes, re-grades, then compares diff_sha256, hunk fingerprints and the HMAC digest. A different branch or an edited record makes it exit 1; editing probes.json changes nothing, because that file is not one of its inputs."
+      }
+    },
+    {
+      "title": {
+        "zh": "按片段计分，豁免是写明的",
+        "en": "Scored per hunk, with exemptions spelled out"
+      },
+      "body": {
+        "zh": "一个片段的所有探针都答对才算覆盖；答错两次就锁死，本次分支状态下保持未覆盖。锁文件、生成物、纯注释、空白改动等八种情况由规则显式豁免并写明原因，不进分母。覆盖率就是已覆盖片段数除以非豁免片段数。",
+        "en": "A hunk counts as covered only when every one of its probes is correct; two misses lock it, and it stays uncovered for that branch state. Eight conditions — lockfiles, generated output, comment-only and whitespace changes among them — are explicitly exempt with a stated reason and leave the denominator. Coverage is covered hunks over non-exempt hunks."
+      }
+    }
+  ],
+  "story": {
+    "intro": {
+      "title": {
+        "zh": "合并记录的是权限，不是理解",
+        "en": "A merge records permission, not comprehension"
+      },
+      "body": {
+        "zh": "agent 写完一个分支，PR 描述和测试也是它写的，CI 是绿的。你能做的动作只有 approve 或 request changes，没有任何东西区分「我重走了一遍这次改动」和「我读了摘要、看了绿灯、点了通过」——而在交付压力下，后者永远更便宜。于是「合并」记录的是谁点了按钮，不是谁看懂了哪一段。Hunkwise 把理解拆到片段粒度并让它可机器判分：片段 → 事实 → 探针 → 存证，全部落在仓库本地的 .hunkwise/ 里，不要求 reviewer 写自由文本，也不用第二个模型判断「答得好不好」。",
+        "en": "An agent finishes a branch, writes the PR description and the tests, and CI goes green. Your only actions are approve or request changes; nothing separates \"I walked through this change\" from \"I read the summary, saw the checks, and clicked approve\" — and under delivery pressure the second is always cheaper. So a merge records who clicked, not who understood which hunk. Hunkwise moves comprehension down to the hunk and makes it machine-gradable: hunk → fact → probe → attestation, all under the repo's local .hunkwise/. It asks for no free-text answers and uses no second model to decide whether an answer was good enough."
+      }
+    },
+    "sections": [
+      {
+        "title": {
+          "zh": "一次评审走的路",
+          "en": "The path one review takes"
+        },
+        "body": {
+          "zh": "diff --base 把分支拆成 git diff -U0 的片段，识别事实、指纹和豁免原因；probes 为每条事实出一道四选一题，每个片段最多三道；review 在 127.0.0.1 起工作台，左边 diff、右边一道题、上面实时覆盖率，答错一次给出证据行、两次锁死；attest 把判决封成 HMAC 存证；verify 重算一切，覆盖满了退出 0，有未覆盖片段退出 1 并逐条列出。豁免的片段就在旁边写明原因：它们不进分母，也不参与判分。",
+          "en": "diff --base splits the branch into git diff -U0 hunks and identifies facts, fingerprints and exemption reasons. probes turns each fact into one four-option question, at most three per hunk. review serves the workbench on 127.0.0.1 — diff on the left, one question on the right, live coverage above — showing an evidence line after a miss and locking a probe after two. attest seals the verdict into an HMAC record; verify recomputes everything and exits 0 when coverage is complete, or 1 with each uncovered hunk listed. Exempt hunks sit beside the flow with their reason written out: they leave the denominator and are never graded."
+        },
+        "image": {
+          "light": "/assets/presentation/process-light.svg",
+          "dark": "/assets/presentation/process-dark.svg",
+          "alt": {
+            "zh": "diff、probes、review 答题、attest、verify 与 pre-push 闸门的顺序流程，以及 lockfile 和 no_fact 片段被显式豁免、不进分母",
+            "en": "The ordered diff, probes, review, attest, verify and pre-push gate flow, with lockfile and no_fact hunks explicitly exempt and outside the denominator"
+          },
+          "mobile": {
+            "light": "/assets/presentation/process-mobile-light.svg",
+            "dark": "/assets/presentation/process-mobile-dark.svg"
+          }
+        }
+      },
+      {
+        "title": {
+          "zh": "一个进程，几个扁平文件",
+          "en": "One process, a few flat files"
+        },
+        "body": {
+          "zh": "一个 Node 进程，几次只读的 git 子进程调用，没有数据库、没有守护进程、没有账号。src/diff.ts 写 .hunkwise/diff.json，src/probes.ts 写 probes.json，src/server.ts 与 src/ui/workbench.html 把答题落进 answers.json，src/attestation.ts 写 attestations/<head>.json，src/gate.ts 被 verify 和 pre-push 共用，src/cli.ts 只解析参数并打印。gate 每次从分支重算，不读 probes.json，也不把记录当事实。",
+          "en": "One Node process, a few read-only git calls, no database, no daemon, no account. src/diff.ts writes .hunkwise/diff.json, src/probes.ts writes probes.json, src/server.ts plus src/ui/workbench.html persist answers into answers.json, src/attestation.ts writes attestations/<head>.json, src/gate.ts is shared by verify and pre-push, and src/cli.ts only parses flags and prints. gate recomputes from the branch every time: it reads neither probes.json nor the record as truth."
+        },
+        "image": {
+          "light": "/assets/presentation/architecture-light.svg",
+          "dark": "/assets/presentation/architecture-dark.svg",
+          "alt": {
+            "zh": "src/diff.ts 到 probes.ts、server/workbench、attestation.ts、gate.ts 与 pre-push 的模块链，以及中间的 diff.json、probes.json、answers.json 与 attestations/<head>.json",
+            "en": "The module chain from src/diff.ts through probes.ts, server/workbench, attestation.ts and gate.ts into pre-push, with diff.json, probes.json, answers.json and attestations/<head>.json between them"
+          },
+          "mobile": {
+            "light": "/assets/presentation/architecture-mobile-light.svg",
+            "dark": "/assets/presentation/architecture-mobile-dark.svg"
+          }
+        }
+      },
+      {
+        "title": {
+          "zh": "四类事实、八种豁免、三个 git 接触点",
+          "en": "Four fact kinds, eight exemptions, three git contact points"
+        },
+        "body": {
+          "zh": "事实只有四类：guard_removed、error_path_changed、new_branch、symbol_renamed，规则是文本级的，不建 AST，也不做跨语言语义分析，所以一个语义改动落在四类之外会诚实地拿到 no_fact。豁免有八种：no_fact、comment-only、whitespace、lockfile、generated、binary、mode-change、rename-only。它对外只有三个 git 接触点：git diff -U0 读改动、.git/hooks/pre-push 挂闸门、verify-push 读 git 传来的 refs 逐个 commit 校验。把 verify 接进 GitLab / Gitee runner 是路线图，v0.1 没有交付。",
+          "en": "There are only four fact kinds — guard_removed, error_path_changed, new_branch, symbol_renamed — recognized by text rules with no AST and no cross-language semantic analysis, so a semantic change outside them honestly lands as no_fact. There are eight exemptions: no_fact, comment-only, whitespace, lockfile, generated, binary, mode-change, rename-only. It has exactly three git contact points: git diff -U0 to read the change, .git/hooks/pre-push to install the gate, and verify-push to check each pushed commit from the refs git passes in. Wiring verify into a GitLab / Gitee runner is roadmap; v0.1 does not ship it."
+        },
+        "image": {
+          "light": "/assets/presentation/capabilities-light.svg",
+          "dark": "/assets/presentation/capabilities-dark.svg",
+          "alt": {
+            "zh": "四类事实、八种豁免原因、git diff 与 pre-push 与 verify-push 三个 git 接触点，以及标注为路线图的 CI runner",
+            "en": "The four fact kinds, eight exemption reasons, the three git contact points (diff, pre-push, verify-push), and a CI runner explicitly marked as roadmap"
+          },
+          "mobile": {
+            "light": "/assets/presentation/capabilities-mobile-light.svg",
+            "dark": "/assets/presentation/capabilities-mobile-dark.svg"
+          }
+        }
+      }
+    ],
+    "details": [
+      {
+        "title": {
+          "zh": "配置：两个文件，其余都是运行状态",
+          "en": "Configuration: two files, everything else is runtime state"
+        },
+        "body": {
+          "zh": "init 之后只有两个文件算配置：config.json 存 schema 与 base，key 是 32 字节 hex、权限 0600。其余都是运行状态：diff.json、probes.json、answers.json、attestations/<head>.json。init 只在缺失时创建 key，也不覆盖已存在的 config，要换 base 直接改文件；.hunkwise/ 由 init 写进 .gitignore，所以 key 和答案不随分支走。换台机器要重新 init，旧存证仍可 verify，前提是 key 一起带过去。",
+          "en": "After init only two files are configuration: config.json holds the schema and base, and key is 32 bytes of hex with mode 0600. Everything else is runtime state: diff.json, probes.json, answers.json, attestations/<head>.json. init creates the key only when missing and never overwrites an existing config; edit the file to change the base. init adds .hunkwise/ to .gitignore, so keys and answers do not travel with the branch. A new machine needs a fresh init; old records can still be verified if you bring the key along."
+        },
+        "code": "{\n  \"schema\": \"hunkwise/config@1\",\n  \"base\": \"origin/main\"\n}"
+      },
+      {
+        "title": {
+          "zh": "存证能证明什么，不能证明什么",
+          "en": "What the record does and does not prove"
+        },
+        "body": {
+          "zh": "attestations/<head>.json 里，diff_sha256 把记录绑在某个分支状态上，每个片段带自己的 fingerprint，digest 是用 .hunkwise/key 对除 digest 外全部字段做的 HMAC-SHA256。所以改分支后拿旧记录过闸会失败，手改 covered 会让摘要校验失败。但 key 就在仓库里，拿到记录和 key 的人可以重签一份：它证明记录没被改过，不证明是谁答的。答案键也落在本机 probes.json 里，本地闸门拦的是「没读 diff 就点通过」这条默认路径，不是铁了心的作弊。",
+          "en": "In attestations/<head>.json, diff_sha256 binds the record to one branch state, each hunk carries its own fingerprint, and digest is an HMAC-SHA256 over every other field keyed by .hunkwise/key. So an old record dragged onto a changed branch fails, and editing covered fails the digest check. But the key lives in the repo: anyone holding the record and the key can re-sign it. It proves the record was not edited, not who answered. The answer keys also sit in the local probes.json, so the local gate blocks the default path — approving without reading the diff — not a determined cheater."
+        }
+      },
+      {
+        "title": {
+          "zh": "覆盖率怎么算",
+          "en": "How coverage is computed"
+        },
+        "body": {
+          "zh": "片段是分母，事实是分子：一个片段的所有探针都 correct 才算 covered，attempts 取它最难那道题的次数。两次答错锁死，片段在本次分支状态下保持未覆盖，只能改代码产生新的片段指纹再走一遍。coverage.ratio = covered / total，total 不含豁免；total 为 0 时 ratio 记为 1——没有需要证明的片段就不该阻塞。工作台、status、attest 共用同一个 grade()，verify 用同一套规则复核重算结果与存证，所以不存在「界面显示通过、verify 不通过」的两套账。",
+          "en": "Hunks are the denominator and facts the numerator: a hunk is covered only when all its probes are correct, with attempts taken from its hardest question. Two misses lock it, and it stays uncovered for that branch state until a code change produces a new hunk fingerprint. coverage.ratio = covered / total, with total excluding exemptions; when total is 0 the ratio is recorded as 1 — nothing to prove should not block. The workbench, status and attest share one grade(), and verify applies the same rule to compare a fresh recomputation against the record, so the UI and the gate cannot disagree."
+        }
+      }
+    ]
+  },
+  "demo": {
+    "title": {
+      "zh": "一次真实运行的全部数字",
+      "en": "Every number from one real run"
+    },
+    "note": {
+      "zh": "下面每条命令与输出都逐字来自一次真实运行，记录在 docs/demo-results.json：Node 22.23.1，演示仓库由 docs/record-demo.sh 在临时目录里创建，所以 commit 号与绝对路径每次录制都会变。前五步是 agent/checkout 分支：6 个片段、3 个豁免、4 道题全部一次答对、verify 退出 0；最后一步切到只答了一半的 agent/checkout-legacy，verify 退出 1，git push 被 pre-push hook 拒绝。",
+      "en": "Every command and output below is copied verbatim from one real run recorded in docs/demo-results.json: Node 22.23.1, with the demo repository created in a temp directory by docs/record-demo.sh, so commit ids and absolute paths change on every recording. The first five steps are the agent/checkout branch: 6 hunks, 3 exempt, all 4 probes correct on the first attempt, verify exits 0. The last step switches to the half-answered agent/checkout-legacy branch, where verify exits 1 and git push is refused by the pre-push hook."
+    },
+    "source": "https://github.com/SuperMarioYL/hunkwise/blob/main/docs/demo-results.json",
+    "steps": [
+      {
+        "label": {
+          "zh": "拆片段",
+          "en": "diff"
+        },
+        "body": {
+          "zh": "分支被拆成 6 个片段：3 个进入分母，2 个 lockfile、1 个 no_fact 豁免；4 条事实写进 diff.json。指纹是归一化片段文本的 sha256 前缀，后面的 verify 会重新算一遍。",
+          "en": "The branch splits into 6 hunks: 3 enter the denominator, 2 are exempt as lockfile and 1 as no_fact, and 4 facts are written to diff.json. A fingerprint is the sha256 prefix of the normalized hunk text, and verify recomputes every one."
+        },
+        "image": "/assets/presentation/demo-diff-light.svg",
+        "imageDark": "/assets/presentation/demo-diff-dark.svg",
+        "command": "npx hunkwise diff --base origin/main",
+        "output": "HUNK                     FACTS               FINGERPRINT   EXEMPT\n-----------------------  ------------------  ------------  --------\npackage-lock.json:12-14  -                   6423404c9341  lockfile\npackage-lock.json:45-47  -                   437cc0f047d0  lockfile\nsrc/api/handler.ts:3-3   -                   6ca2e53878df  no_fact\nsrc/api/handler.ts:5-8   new_branch          a5787c4cc0f7  -\nsrc/auth/errors.ts:5-5   error_path_changed  e7a3b31ff628  -\nsrc/auth/session.ts:7-9  guard_removed       c98bb1f8f548  -\n6 hunks, 3 exempt, 4 facts written to .hunkwise/diff.json"
+      },
+      {
+        "label": {
+          "zh": "出题",
+          "en": "probes"
+        },
+        "body": {
+          "zh": "四条事实生成 4 道四选一题，写入 probes.json。同一份 diff 再跑一次，这个文件逐字节相同；选项顺序由片段指纹洗牌，不靠随机数。",
+          "en": "The four facts become 4 four-option questions written to probes.json. Run the same diff again and the file is byte-identical: option order is shuffled by the hunk fingerprint, not by a random seed."
+        },
+        "image": "/assets/presentation/demo-probe-light.svg",
+        "imageDark": "/assets/presentation/demo-probe-dark.svg",
+        "command": "npx hunkwise probes",
+        "output": "4 probes over 3 hunks written to .hunkwise/probes.json"
+      },
+      {
+        "label": {
+          "zh": "答题",
+          "en": "answer"
+        },
+        "body": {
+          "zh": "四道题全部一次答对，覆盖率到 3/3。录屏里提交答案用的是工作台同一个 POST /api/answer，所以这一段能在终端里脚本化；answer_index 从不下发给浏览器。",
+          "en": "All four probes are correct on the first attempt and coverage reaches 3/3. The recording submits answers through the same POST /api/answer the workbench sends, which is why the run is scriptable in a terminal; answer_index is never sent to the browser."
+        },
+        "image": "/assets/presentation/demo-probe-light.svg",
+        "imageDark": "/assets/presentation/demo-probe-dark.svg",
+        "command": "POST /api/answer (4 probes, first attempt each)",
+        "output": "src/api/handler.ts:5-8#1  correct=true\nsrc/api/handler.ts:5-8#2  correct=true\nsrc/auth/errors.ts:5-5#1  correct=true\nsrc/auth/session.ts:7-9#1  correct=true\ncoverage 3/3 hunks, 3 exempt"
+      },
+      {
+        "label": {
+          "zh": "封存",
+          "en": "attest"
+        },
+        "body": {
+          "zh": "把 3/3 的判决、diff_sha256 与每个片段的指纹封成 HMAC 存证，写到 attestations/<head>.json，退出码 0。存证是防篡改的，不是身份归属。",
+          "en": "The 3/3 verdict, diff_sha256 and each hunk fingerprint are sealed into an HMAC record at attestations/<head>.json, exit code 0. The record is tamper-evident, not an identity claim."
+        },
+        "image": "/assets/presentation/demo-attest-light.svg",
+        "imageDark": "/assets/presentation/demo-attest-dark.svg",
+        "command": "npx hunkwise attest",
+        "output": "sealed 3/3 hunks (100%), 3 exempt\nreviewer: reviewer@acme.test\nrecord: .hunkwise/attestations/3f79732815f8d46b824b873a7586e48acdad7bcb.json"
+      },
+      {
+        "label": {
+          "zh": "exit 0",
+          "en": "exit 0"
+        },
+        "body": {
+          "zh": "verify 从分支重算 diff 与答案键，再和存证对上摘要、diff_sha256 与片段指纹，退出码 0。它没有读磁盘上的 probes.json。",
+          "en": "verify recomputes the diff and the answer keys from the branch, then matches the digest, diff_sha256 and hunk fingerprints against the record: exit code 0. It never read the on-disk probes.json."
+        },
+        "image": "/assets/presentation/demo-gate-light.svg",
+        "imageDark": "/assets/presentation/demo-gate-dark.svg",
+        "command": "npx hunkwise verify --base origin/main",
+        "output": "covered 3/3 hunks for 3f79732815f8 (3 exempt)"
+      },
+      {
+        "label": {
+          "zh": "被拒",
+          "en": "refused"
+        },
+        "body": {
+          "zh": "同一分支上 verify 退出 1；install-hook 写下的 pre-push 调 verify-push，逐个校验被推送的 commit，不用 checkout 中的 HEAD 冒充，于是 git push 也以退出码 1 结束。这个 hook 是本地闸门，--no-verify 可以绕过。",
+          "en": "On this branch verify exits 1. The pre-push hook installed by install-hook runs verify-push, which checks every pushed commit rather than substituting the checked-out HEAD, so git push also ends with exit code 1. This hook is a local gate; --no-verify bypasses it."
+        },
+        "image": "/assets/presentation/demo-gate-light.svg",
+        "imageDark": "/assets/presentation/demo-gate-dark.svg",
+        "command": "git push origin agent/checkout-legacy",
+        "output": "hunkwise: refs/heads/agent/checkout-legacy (f00f1ada6a45) has 1/2 non-exempt hunks uncovered\n  src/auth/errors.ts:5-5  not covered\nhunkwise: push rejected; answer the probes and seal before pushing again.\nerror: failed to push some refs to '/var/folders/y6/1gqlrpy15xx2k5l_cksbsfd80000gn/T//hunkwise-demo/origin.git'"
+      }
+    ]
+  },
+  "quickstart": {
+    "title": {
+      "zh": "十分钟跑到第一次 verify 退出 0",
+      "en": "Ten minutes to your first verify exit 0"
+    },
+    "body": {
+      "zh": "需要 Node 22+。hunkwise 还没发布到 npm，今天先用本地 checkout 打包安装；装好之后每条命令都能直接复制。下面的数字来自演示仓库，你的片段数与覆盖率不会相同，命令和退出码是固定的。",
+      "en": "You need Node 22+. hunkwise is not on npm yet, so install from a local checkout today; after that every command below is copy-paste ready. The numbers come from the demo repository — your hunk counts and coverage will differ, while the commands and exit codes stay the same."
+    },
+    "steps": [
+      {
+        "title": {
+          "zh": "安装（今天可用的方式：源码打包）",
+          "en": "Install (what works today: build from source)"
+        },
+        "code": "git clone https://github.com/SuperMarioYL/hunkwise.git\ncd hunkwise && npm ci && npm run build && npm pack\nnpm i -D /path/to/hunkwise/hunkwise-0.1.0.tgz"
+      },
+      {
+        "title": {
+          "zh": "初始化：写 config、本地 HMAC key，把 .hunkwise/ 加进 .gitignore",
+          "en": "Initialize: config, local HMAC key, .gitignore entry"
+        },
+        "code": "npx hunkwise init"
+      },
+      {
+        "title": {
+          "zh": "让 base 分支在本地存在",
+          "en": "Make the base branch exist locally"
+        },
+        "code": "git fetch origin main"
+      },
+      {
+        "title": {
+          "zh": "把分支拆成片段，打印片段表，写 diff.json",
+          "en": "Split the branch into hunks and write diff.json"
+        },
+        "code": "npx hunkwise diff --base origin/main"
+      },
+      {
+        "title": {
+          "zh": "生成探针，写 probes.json",
+          "en": "Generate probes into probes.json"
+        },
+        "code": "npx hunkwise probes"
+      },
+      {
+        "title": {
+          "zh": "起工作台（只绑 127.0.0.1），在浏览器里答题",
+          "en": "Serve the workbench (loopback only) and answer in the browser"
+        },
+        "code": "npx hunkwise review --base origin/main"
+      },
+      {
+        "title": {
+          "zh": "随时看覆盖率（另一个终端）",
+          "en": "Check coverage any time (second terminal)"
+        },
+        "code": "npx hunkwise status"
+      },
+      {
+        "title": {
+          "zh": "封存存证",
+          "en": "Seal the record"
+        },
+        "code": "npx hunkwise attest"
+      },
+      {
+        "title": {
+          "zh": "过闸：覆盖满了退出 0，有未覆盖片段退出 1 并列出片段 id",
+          "en": "Run the gate: exit 0 when covered, exit 1 with uncovered hunk ids"
+        },
+        "code": "npx hunkwise verify --base origin/main"
+      },
+      {
+        "title": {
+          "zh": "让同一条命令在 pre-push 上跑",
+          "en": "Run the same command on pre-push"
+        },
+        "code": "npx hunkwise install-hook"
+      }
+    ]
+  },
+  "limitations": [
+    {
+      "zh": "本地闸门，不是服务端强制：CLI 加 pre-push hook，git push --no-verify 能绕过它。v0.1 没有分支保护，也没有服务端拒绝合并；那是 v0.2 团队层的事。",
+      "en": "A local gate, not server-side enforcement: a CLI plus a pre-push hook, and git push --no-verify bypasses it. v0.1 has no branch protection and no server-side merge refusal; that is the v0.2 team tier."
+    },
+    {
+      "zh": "存证是防篡改，不是身份归属：HMAC key 就在仓库里，拿到记录和 key 的人可以重签一份。它证明记录没被改过，不证明是谁答的。",
+      "en": "The record is tamper-evident, not identity: the HMAC key lives in the repo, so anyone with the record and the key can re-sign it. It proves the record was not edited, not who answered."
+    },
+    {
+      "zh": "npm 包尚未发布：hunkwise 还不在 npm 上，install-hook 也拒绝把 hook 指向 npx 临时缓存。今天要从源码 npm pack 安装，并在目标仓库里装成 devDependency 或全局包。",
+      "en": "The npm package is not published yet: hunkwise is not on npm, and install-hook refuses to point a hook into the npx cache. Install from a source npm pack today, as a devDependency of the target repo or a global package."
+    },
+    {
+      "zh": "规则是文本级的：只有四类事实，没有 AST、类型推断或跨语言语义分析，v0.1 只在 JS/TS 上实测过。落在四类之外的语义改动会以 no_fact 豁免，而不是被猜成一道题。",
+      "en": "The rules are textual: four fact kinds only, with no AST, type inference or cross-language semantic analysis, and v0.1 is exercised on JS/TS. A semantic change outside the four kinds is exempted as no_fact instead of being guessed into a question."
+    },
+    {
+      "zh": "不做托管服务、账号、多人同步、团队看板；不做历史回填、批量给旧 PR 打分；没有计费代码。工作台只绑回环地址，状态只在 .hunkwise/ 下的扁平 JSON。",
+      "en": "No hosted service, accounts, multi-user sync or team dashboards; no backfilling history or bulk-scoring old PRs; no billing code. The workbench binds loopback only, and state is flat JSON under .hunkwise/."
+    }
+  ],
+  "cta": {
+    "headline": {
+      "zh": "先在你的仓库上\n跑出第一次 exit 0",
+      "en": "Get your first exit 0\non your own repo"
+    },
+    "button": {
+      "zh": "在 GitHub 上开始",
+      "en": "Get started on GitHub"
+    }
+  },
+  "footer": {
+    "tag": {
+      "zh": "Node 22+ · MIT · 本地 pre-push 闸门 · 判定路径上没有模型",
+      "en": "Node 22+ · MIT · local pre-push gate · no model on the grading path"
+    }
+  }
+}

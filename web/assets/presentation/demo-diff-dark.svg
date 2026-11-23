@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="300" viewBox="0 0 760 300" role="img" aria-label="diff 输出：六个片段、事实、指纹与豁免原因" data-palette="dce656-9ce76a-f6e0ac-5e58edbd6e33">
+<style>
+    text{font-family:-apple-system,'Segoe UI','PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif}
+    .mono{font-family:'SF Mono','JetBrains Mono','Cascadia Code',ui-monospace,Menlo,Consolas,monospace}
+    .flow{stroke-dasharray:5 7;animation:march 1.9s linear infinite}
+    .flow-slow{stroke-dasharray:4 8;animation:march 3.6s linear infinite}
+    .drift1{animation:drift1 12s ease-in-out infinite alternate}
+    .drift2{animation:drift2 15s ease-in-out infinite alternate}
+    .pulse{animation:pulse 3s ease-in-out infinite}
+    .pulse2{animation:pulse 4.4s ease-in-out infinite}
+    .blink{animation:blink 2.8s steps(2,jump-none) infinite}
+    @keyframes march{to{stroke-dashoffset:-24}}
+    @keyframes drift1{from{transform:translate(0,0)}to{transform:translate(11px,-15px)}}
+    @keyframes drift2{from{transform:translate(0,0)}to{transform:translate(-13px,11px)}}
+    @keyframes pulse{0%,100%{opacity:.32}50%{opacity:1}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+    @media (prefers-reduced-motion: reduce){*{animation:none !important}}</style>
+<defs>
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="5" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <radialGradient id="halo" cx="50%" cy="46%" r="64%">
+    <stop offset="0%" stop-color="#dce656" stop-opacity="0.14"/>
+    <stop offset="55%" stop-color="#9ce76a" stop-opacity="0.05"/>
+    <stop offset="100%" stop-color="#0a0c0d" stop-opacity="0"/>
+  </radialGradient>
+  <marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#dce656"/>
+  </marker>
+  <marker id="arwm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" fill="#b0b9a8"/>
+  </marker>
+</defs>
+<rect width="760" height="300" fill="#0a0c0d"/>
+<rect width="760" height="300" fill="url(#halo)"/>
+<g opacity="0.55"><line x1="60" y1="0" x2="60" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="120" y1="0" x2="120" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="180" y1="0" x2="180" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="240" y1="0" x2="240" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="300" y1="0" x2="300" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="360" y1="0" x2="360" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="420" y1="0" x2="420" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="480" y1="0" x2="480" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="540" y1="0" x2="540" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="600" y1="0" x2="600" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="660" y1="0" x2="660" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="720" y1="0" x2="720" y2="300" stroke="#383c1d" stroke-width="0.6"/><line x1="0" y1="60" x2="760" y2="60" stroke="#383c1d" stroke-width="0.6"/><line x1="0" y1="120" x2="760" y2="120" stroke="#383c1d" stroke-width="0.6"/><line x1="0" y1="180" x2="760" y2="180" stroke="#383c1d" stroke-width="0.6"/><line x1="0" y1="240" x2="760" y2="240" stroke="#383c1d" stroke-width="0.6"/></g>
+
+  <rect x="1" y="1" width="758" height="298" rx="14" fill="#131717" stroke="#383c1d"/>
+  <circle cx="28" cy="28" r="4" fill="#dce656"/><circle cx="44" cy="28" r="4" fill="#9ce76a"/><circle cx="60" cy="28" r="4" fill="#b0b9a8"/>
+  <text x="80" y="33" class="mono" font-size="13" fill="#b0b9a8">$ npx hunkwise diff --base origin/main</text>
+  <g class="mono" font-size="11.5" fill="#b0b9a8">
+    <text x="28" y="66">HUNK</text><text x="300" y="66">FACTS</text><text x="486" y="66">FINGERPRINT</text><text x="636" y="66">EXEMPT</text>
+  </g><text x="28" y="92" class="mono" font-size="12.5" fill="#b0b9a8">package-lock.json:12-14</text>
+  <text x="300" y="92" class="mono" font-size="12" fill="#b0b9a8">-</text>
+  <text x="486" y="92" class="mono" font-size="12" fill="#b0b9a8">6423404c9341</text>
+  <text x="636" y="92" class="mono" font-size="12" fill="#b0b9a8">lockfile</text><text x="28" y="119" class="mono" font-size="12.5" fill="#b0b9a8">package-lock.json:45-47</text>
+  <text x="300" y="119" class="mono" font-size="12" fill="#b0b9a8">-</text>
+  <text x="486" y="119" class="mono" font-size="12" fill="#b0b9a8">437cc0f047d0</text>
+  <text x="636" y="119" class="mono" font-size="12" fill="#b0b9a8">lockfile</text><text x="28" y="146" class="mono" font-size="12.5" fill="#b0b9a8">src/api/handler.ts:3-3</text>
+  <text x="300" y="146" class="mono" font-size="12" fill="#b0b9a8">-</text>
+  <text x="486" y="146" class="mono" font-size="12" fill="#b0b9a8">6ca2e53878df</text>
+  <text x="636" y="146" class="mono" font-size="12" fill="#b0b9a8">no_fact</text><text x="28" y="173" class="mono" font-size="12.5" fill="#fdf9ee">src/api/handler.ts:5-8</text>
+  <text x="300" y="173" class="mono" font-size="12" fill="#9ce76a">new_branch</text>
+  <text x="486" y="173" class="mono" font-size="12" fill="#b0b9a8">a5787c4cc0f7</text>
+  <text x="636" y="173" class="mono" font-size="12" fill="#b0b9a8">-</text><circle cx="16" cy="169" r="3.5" fill="#dce656"/><text x="28" y="200" class="mono" font-size="12.5" fill="#fdf9ee">src/auth/errors.ts:5-5</text>
+  <text x="300" y="200" class="mono" font-size="12" fill="#9ce76a">error_path_changed</text>
+  <text x="486" y="200" class="mono" font-size="12" fill="#b0b9a8">e7a3b31ff628</text>
+  <text x="636" y="200" class="mono" font-size="12" fill="#b0b9a8">-</text><circle cx="16" cy="196" r="3.5" fill="#dce656"/><text x="28" y="227" class="mono" font-size="12.5" fill="#fdf9ee">src/auth/session.ts:7-9</text>
+  <text x="300" y="227" class="mono" font-size="12" fill="#9ce76a">guard_removed</text>
+  <text x="486" y="227" class="mono" font-size="12" fill="#b0b9a8">c98bb1f8f548</text>
+  <text x="636" y="227" class="mono" font-size="12" fill="#b0b9a8">-</text><circle cx="16" cy="223" r="3.5" fill="#dce656"/><line x1="28" y1="256" x2="732" y2="256" stroke="#383c1d"/>
+  <text x="28" y="278" class="mono" font-size="12.5" fill="#dce656">6 hunks · 3 exempt · 4 facts → .hunkwise/diff.json</text>
+</svg>
