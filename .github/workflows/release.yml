@@ -1,0 +1,94 @@
+name: release
+
+# A tag push is the whole trigger: it builds the npm tarball into dist/, attaches it (with
+# checksums) to the GitHub Release, and publishes to npm only when the NPM_TOKEN secret exists.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    name: package and attach the release assets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Check the tag matches VERSION and package.json
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          file_version="$(tr -d '[:space:]' < VERSION)"
+          if [ "v$version" != "$GITHUB_REF_NAME" ] || [ "$file_version" != "$version" ]; then
+            echo "tag $GITHUB_REF_NAME, package.json $version, VERSION $file_version disagree" >&2
+            exit 1
+          fi
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Test
+        run: npm test
+
+      - name: Build and pack into dist/
+        run: |
+          npm run build
+          mkdir -p dist
+          npm pack --pack-destination dist
+          # A stable name, so /releases/latest/download/hunkwise.tgz always resolves.
+          cp dist/hunkwise-*.tgz dist/hunkwise.tgz
+          cd dist && sha256sum *.tgz > checksums.txt && cat checksums.txt
+
+      - name: Upload the workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: hunkwise-dist
+          path: dist/*
+          if-no-files-found: error
+
+      # The release asset is the deliverable: a tag push must produce a downloadable tarball,
+      # not just a workflow artifact that expires.
+      - name: Attach dist/ to the GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+
+  npm:
+    name: publish to npm (when NPM_TOKEN is set)
+    needs: package
+    runs-on: ubuntu-latest
+    env:
+      # Secrets are not available to job-level `if`; expose the value as env and
+      # test it on the step instead. A repo without the secret skips publishing
+      # and still has a green release.
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Publish
+        if: env.NPM_TOKEN != ''
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

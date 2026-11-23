@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>hunkwise — review workbench</title>
+    <style>
+      :root {
+        --bg: #0d1017;
+        --panel: #141924;
+        --panel-2: #191f2c;
+        --line: #232b3a;
+        --text: #d9e0ec;
+        --muted: #8b97ab;
+        --accent: #6ea8fe;
+        --accent-soft: rgba(110, 168, 254, 0.14);
+        --add: #4ade80;
+        --del: #f87171;
+        --warn: #fbbf24;
+        --radius: 10px;
+        --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 14px/1.5 var(--sans);
+        display: flex;
+        flex-direction: column;
+      }
+      button {
+        font: inherit;
+        color: var(--text);
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 7px 13px;
+        cursor: pointer;
+      }
+      button:hover:not(:disabled) { border-color: var(--accent); }
+      button:disabled { opacity: 0.45; cursor: not-allowed; }
+      button.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #0b1220;
+        font-weight: 650;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .brand { font-weight: 700; letter-spacing: 0.2px; }
+      .brand span { color: var(--muted); font-weight: 400; margin-left: 8px; }
+      .meta { color: var(--muted); font-family: var(--mono); font-size: 12px; }
+      .coverage-wrap { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+      .bar {
+        width: min(30vw, 280px);
+        height: 8px;
+        background: #0a0e15;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .bar > div {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, #3b82f6, var(--add));
+        transition: width 220ms ease;
+      }
+      #coverage-label { font-family: var(--mono); font-size: 12px; color: var(--muted); min-width: 120px; }
+      main {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      }
+      .pane { min-height: 0; display: flex; flex-direction: column; }
+      .pane + .pane { border-left: 1px solid var(--line); }
+      .pane-head {
+        padding: 9px 16px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: flex;
+        gap: 10px;
+      }
+      .scroll { overflow: auto; padding: 14px 16px 40px; min-height: 0; flex: 1; }
+      .file-block { margin-bottom: 22px; }
+      .file-name { font-family: var(--mono); font-size: 12.5px; color: var(--accent); margin-bottom: 8px; }
+      .hunk {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 12px;
+        background: var(--panel);
+        transition: border-color 160ms ease, box-shadow 160ms ease;
+      }
+      .hunk.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-soft); }
+      .hunk.exempt { opacity: 0.55; }
+      .hunk-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 10px;
+        background: var(--panel-2);
+        border-bottom: 1px solid var(--line);
+        cursor: pointer;
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+      .hunk-head .id { color: var(--text); }
+      .hunk-head .header { color: var(--muted); }
+      .tag {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 1px 8px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .tag.fact { border-color: rgba(110, 168, 254, 0.4); color: var(--accent); }
+      .tag.exempt { border-color: rgba(251, 191, 36, 0.35); color: var(--warn); }
+      .code { font-family: var(--mono); font-size: 12.5px; }
+      .code-row {
+        display: grid;
+        grid-template-columns: 52px 18px 1fr;
+        gap: 6px;
+        padding: 1px 10px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .code-row .ln { color: #4b5568; text-align: right; user-select: none; }
+      .code-row .sign { color: var(--muted); }
+      .code-row.add { background: rgba(74, 222, 128, 0.08); }
+      .code-row.add .sign { color: var(--add); }
+      .code-row.del { background: rgba(248, 113, 113, 0.08); }
+      .code-row.del .sign { color: var(--del); }
+      .code-row.evidence { background: rgba(251, 191, 36, 0.14); outline: 1px solid rgba(251, 191, 36, 0.45); outline-offset: -1px; }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 18px;
+      }
+      .probe-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+      .probe-top .kicker { color: var(--muted); font-family: var(--mono); font-size: 12px; }
+      .prompt { font-size: 16px; line-height: 1.45; margin: 0 0 16px; }
+      .options { display: grid; gap: 9px; margin-bottom: 16px; }
+      .option {
+        display: grid;
+        grid-template-columns: 22px 1fr;
+        gap: 10px;
+        align-items: start;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: var(--panel-2);
+        cursor: pointer;
+      }
+      .option:hover { border-color: #33415a; }
+      .option input { margin: 3px 0 0; accent-color: var(--accent); }
+      .option.selected { border-color: var(--accent); background: var(--accent-soft); }
+      .option.correct { border-color: var(--add); background: rgba(74, 222, 128, 0.1); }
+      .option.wrong { border-color: var(--del); background: rgba(248, 113, 113, 0.1); }
+      .option code { font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap; word-break: break-word; }
+      .actions { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; }
+      .hint { color: var(--muted); font-size: 12.5px; }
+      .feedback { margin-top: 16px; padding: 13px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel-2); display: none; }
+      .feedback.shown { display: block; }
+      .feedback.ok { border-color: rgba(74, 222, 128, 0.5); }
+      .feedback.bad { border-color: rgba(248, 113, 113, 0.5); }
+      .feedback h3 { margin: 0 0 6px; font-size: 13.5px; }
+      .feedback .evidence { font-family: var(--mono); font-size: 12.5px; margin-top: 9px; padding: 9px 10px; border-left: 3px solid var(--warn); background: rgba(251, 191, 36, 0.08); white-space: pre-wrap; word-break: break-word; }
+      .feedback .evidence .where { display: block; color: var(--muted); font-size: 11px; margin-bottom: 4px; }
+      .nav { margin-top: 18px; display: flex; justify-content: space-between; gap: 9px; }
+      .empty { color: var(--muted); padding: 24px 4px; }
+      .sealed {
+        margin-top: 16px;
+        border: 1px solid rgba(74, 222, 128, 0.45);
+        background: rgba(74, 222, 128, 0.08);
+        border-radius: 9px;
+        padding: 12px 14px;
+        font-size: 13px;
+      }
+      .sealed code { font-family: var(--mono); font-size: 12px; word-break: break-all; }
+      #toast {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        max-width: min(520px, 90vw);
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 13px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      }
+      #toast.error { border-color: rgba(248, 113, 113, 0.6); }
+      @media (max-width: 860px) {
+        main { grid-template-columns: 1fr; grid-template-rows: 48vh 1fr; }
+        .pane + .pane { border-left: 0; border-top: 1px solid var(--line); }
+        .bar { width: 120px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">hunkwise <span>review workbench</span></div>
+      <div class="meta" id="meta"></div>
+      <div class="coverage-wrap">
+        <div class="bar" role="progressbar" aria-label="hunk coverage"><div id="coverage-fill"></div></div>
+        <span id="coverage-label">0/0 hunks</span>
+        <button id="seal" class="primary" disabled>Seal attestation</button>
+      </div>
+    </header>
+    <main>
+      <section class="pane" aria-label="Diff">
+        <div class="pane-head"><span>Diff</span><span id="diff-summary"></span></div>
+        <div class="scroll" id="diff"></div>
+      </section>
+      <section class="pane" aria-label="Probe">
+        <div class="pane-head"><span>Probe</span><span id="probe-pos"></span></div>
+        <div class="scroll" id="probe-body">
+          <div class="card" id="probe-card"></div>
+          <div class="hint" style="margin-top: 14px">
+            A wrong answer reveals the diff line it came from once. Two misses leave the hunk
+            uncovered; a covered run can be sealed and then verified before pushing.
+          </div>
+        </div>
+      </section>
+    </main>
+    <div id="toast" hidden></div>
+
+    <script>
+      "use strict";
+
+      const state = {
+        diff: null,
+        probes: [],
+        coverage: null,
+        probeStatus: new Map(),
+        index: 0,
+        selected: null,
+        feedback: null,
+        sealed: null,
+        busy: false,
+      };
+
+      const el = (tag, className, text) => {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      };
+
+      async function api(path, options) {
+        const response = await fetch(path, options);
+        let body = {};
+        try {
+          body = await response.json();
+        } catch {
+          body = {};
+        }
+        if (!response.ok) {
+          throw new Error(body.error || `${response.status} ${response.statusText}`);
+        }
+        return body;
+      }
+
+      function toast(message, isError) {
+        const node = document.getElementById("toast");
+        node.textContent = message;
+        node.className = isError ? "error" : "";
+        node.hidden = false;
+        window.clearTimeout(toast.timer);
+        toast.timer = window.setTimeout(() => {
+          node.hidden = true;
+        }, 9000);
+      }
+
+      function shortHead(head) {
+        return typeof head === "string" ? head.slice(0, 10) : "";
+      }
+
+      function statusOf(probeId) {
+        return (
+          state.probeStatus.get(probeId) || {
+            id: probeId,
+            attempts: 0,
+            correct: false,
+            locked: false,
+          }
+        );
+      }
+
+      function currentProbe() {
+        return state.probes[state.index] || null;
+      }
+
+      function pickStartIndex() {
+        const unresolved = state.probes.findIndex((probe) => {
+          const status = statusOf(probe.id);
+          return !status.correct && !status.locked;
+        });
+        if (unresolved >= 0) return unresolved;
+        const wrong = state.probes.findIndex((probe) => !statusOf(probe.id).correct);
+        return wrong >= 0 ? wrong : 0;
+      }
+
+      function applyCoverage(coverage) {
+        state.coverage = coverage;
+        state.probeStatus = new Map((coverage.probes || []).map((entry) => [entry.id, entry]));
+
+        const total = coverage.total || 0;
+        const covered = coverage.covered || 0;
+        const ratio = total === 0 ? 1 : covered / total;
+        document.getElementById("coverage-fill").style.width = `${Math.round(ratio * 100)}%`;
+        document.getElementById("coverage-label").textContent = `${covered}/${total} hunks${
+          coverage.exempt ? ` · ${coverage.exempt} exempt` : ""
+        }`;
+
+        const sealButton = document.getElementById("seal");
+        const complete = total === 0 || covered === total;
+        sealButton.disabled = !complete || state.busy || state.sealed !== null;
+        sealButton.textContent = state.sealed ? "Sealed" : "Seal attestation";
+      }
+
+      function renderMeta() {
+        if (!state.diff) return;
+        document.getElementById("meta").textContent = `${state.diff.base} → ${shortHead(
+          state.diff.head,
+        )}`;
+        const hunks = state.diff.hunks || [];
+        const exempt = hunks.filter((hunk) => hunk.exempt).length;
+        document.getElementById("diff-summary").textContent = `${hunks.length} hunks · ${
+          hunks.length - exempt
+        } gradable · ${state.probes.length} probes`;
+      }
+
+      function renderDiff() {
+        const root = document.getElementById("diff");
+        root.textContent = "";
+        const current = currentProbe();
+
+        const files = new Map();
+        for (const hunk of state.diff.hunks) {
+          if (!files.has(hunk.file)) files.set(hunk.file, []);
+          files.get(hunk.file).push(hunk);
+        }
+
+        for (const [file, hunks] of files) {
+          const block = el("div", "file-block");
+          block.appendChild(el("div", "file-name", file));
+          for (const hunk of hunks) {
+            const wrapper = el("div", `hunk${hunk.exempt ? " exempt" : ""}`);
+            if (current && current.hunk_id === hunk.id) wrapper.classList.add("current");
+
+            const head = el("div", "hunk-head");
+            head.appendChild(el("span", "id", hunk.id));
+            if (hunk.header) head.appendChild(el("span", "header", hunk.header));
+            for (const kind of [...new Set((hunk.facts || []).map((fact) => fact.kind))]) {
+              head.appendChild(el("span", "tag fact", kind));
+            }
+            if (hunk.exempt) head.appendChild(el("span", "tag exempt", hunk.exempt));
+            head.title = "Jump to this hunk's probe";
+            head.addEventListener("click", () => {
+              const target = state.probes.findIndex((probe) => probe.hunk_id === hunk.id);
+              if (target >= 0) {
+                state.index = target;
+                state.selected = null;
+                state.feedback = null;
+                render();
+              }
+            });
+            wrapper.appendChild(head);
+
+            const code = el("div", "code");
+            if (!hunk.lines || hunk.lines.length === 0) {
+              code.appendChild(el("div", "code-row", "(no textual lines)"));
+            }
+            for (const line of hunk.lines || []) {
+              const row = el("div", `code-row${line.type === "add" ? " add" : line.type === "del" ? " del" : ""}`);
+              row.dataset.line = String(line.line);
+              row.dataset.hunk = hunk.id;
+              row.dataset.text = line.text;
+              row.dataset.type = line.type;
+              row.appendChild(el("span", "ln", String(line.line)));
+              row.appendChild(
+                el("span", "sign", line.type === "add" ? "+" : line.type === "del" ? "-" : " "),
+              );
+              row.appendChild(el("span", "text", line.text));
+              code.appendChild(row);
+            }
+            wrapper.appendChild(code);
+            block.appendChild(wrapper);
+          }
+          root.appendChild(block);
+        }
+      }
+
+      function markEvidence(probeId, line, text) {
+        document.querySelectorAll(".code-row.evidence").forEach((row) => {
+          row.classList.remove("evidence");
+        });
+        if (line === null || line === undefined) return;
+        const rows = Array.from(
+          document.querySelectorAll(`.code-row[data-hunk="${CSS.escape(probeId)}"]`),
+        );
+        const needle = typeof text === "string" ? text.trim() : "";
+        // A replacement hunk has both a deleted and an added row at the same
+        // line; prefer the added row so the highlight agrees with the text.
+        const match =
+          (needle
+            ? rows.find(
+                (row) => row.dataset.type === "add" && (row.dataset.text || "").includes(needle),
+              )
+            : null) ??
+          (needle
+            ? rows.find((row) => (row.dataset.text || "").includes(needle))
+            : null) ??
+          rows.find((row) => row.dataset.line === String(line));
+        if (match) {
+          match.classList.add("evidence");
+          match.scrollIntoView({ block: "center", behavior: "smooth" });
+        }
+      }
+
+      function optionClass(option, index, probe, status) {
+        const classes = ["option"];
+        if (state.selected === index && !status.correct && !status.locked) classes.push("selected");
+        if (status.correct && state.feedback && state.feedback.answer_index === index) {
+          classes.push("correct");
+        }
+        if (
+          state.feedback &&
+          !state.feedback.correct &&
+          state.feedback.answer_index === index
+        ) {
+          classes.push("wrong");
+        }
+        return classes.join(" ");
+      }
+
+      function renderProbe() {
+        const card = document.getElementById("probe-card");
+        card.textContent = "";
+        const position = document.getElementById("probe-pos");
+        const probe = currentProbe();
+
+        if (!probe) {
+          position.textContent = "";
+          card.appendChild(
+            el(
+              "div",
+              "empty",
+              state.probes.length === 0
+                ? "No probes: every hunk in this branch is exempt."
+                : "No probe selected.",
+            ),
+          );
+          renderNav(null);
+          return;
+        }
+
+        position.textContent = `${state.index + 1} of ${state.probes.length}`;
+        const status = statusOf(probe.id);
+
+        const top = el("div", "probe-top");
+        top.appendChild(el("span", "kicker", `probe ${state.index + 1}/${state.probes.length}`));
+        top.appendChild(el("span", "tag fact", probe.kind));
+        top.appendChild(el("span", "tag", probe.hunk_id));
+        card.appendChild(top);
+
+        card.appendChild(el("h2", "prompt", probe.prompt));
+
+        if (status.correct) {
+          card.appendChild(el("div", "hint", "Answered correctly. This hunk counts as covered."));
+        } else if (status.locked) {
+          card.appendChild(
+            el("div", "hint", "Two misses: this probe is locked and its hunk stays uncovered."),
+          );
+        } else if (status.attempts > 0) {
+          card.appendChild(el("div", "hint", "One miss used. You get one more attempt."));
+        }
+
+        const options = el("div", "options");
+        probe.options.forEach((option, index) => {
+          const label = el("label", optionClass(option, index, probe, status));
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = "answer";
+          input.value = String(index);
+          input.checked = state.selected === index;
+          input.disabled = status.correct || status.locked || state.busy;
+          input.addEventListener("change", () => {
+            state.selected = index;
+            renderProbe();
+          });
+          label.appendChild(input);
+          const code = el("code", "", option);
+          label.appendChild(code);
+          options.appendChild(label);
+        });
+        card.appendChild(options);
+
+        const actions = el("div", "actions");
+        const submit = el("button", "primary", status.correct ? "Answered" : "Submit answer");
+        submit.disabled =
+          state.busy ||
+          status.correct ||
+          status.locked ||
+          state.selected === null ||
+          !probe.options[state.selected];
+        submit.addEventListener("click", () => submitAnswer(probe, state.selected));
+        actions.appendChild(submit);
+        actions.appendChild(
+          el(
+            "span",
+            "hint",
+            status.correct
+              ? ""
+              : status.locked
+                ? ""
+                : "The answer key is derived from the diff, never from a model.",
+          ),
+        );
+        card.appendChild(actions);
+
+        const feedback = el("div", "feedback");
+        if (state.feedback) {
+          feedback.classList.add("shown", state.feedback.correct ? "ok" : "bad");
+          feedback.appendChild(
+            el(
+              "h3",
+              "",
+              state.feedback.correct
+                ? "Correct — the changed line is highlighted."
+                : state.feedback.retry_allowed
+                  ? "Not this one. The evidence line is highlighted; try once more."
+                  : "Two misses — this hunk is now uncovered.",
+            ),
+          );
+          if (state.feedback.evidence_text !== undefined) {
+            const evidence = el("div", "evidence");
+            evidence.appendChild(
+              el("span", "where", `line ${state.feedback.evidence_line}`),
+            );
+            evidence.appendChild(document.createTextNode(state.feedback.evidence_text || ""));
+            feedback.appendChild(evidence);
+          }
+        }
+        card.appendChild(feedback);
+
+        if (state.sealed) {
+          const sealed = el("div", "sealed");
+          sealed.appendChild(
+            document.createTextNode(
+              `Record sealed for ${shortHead(state.diff.head)} · coverage ${state.sealed.coverage.covered}/${state.sealed.coverage.total}. Run `,
+            ),
+          );
+          sealed.appendChild(el("code", "", `hunkwise verify --base ${state.diff.base}`));
+          sealed.appendChild(document.createTextNode(" before pushing."));
+          if (state.sealed.path) {
+            sealed.appendChild(el("div", "hint", state.sealed.path));
+          }
+          card.appendChild(sealed);
+        }
+
+        renderNav(probe);
+      }
+
+      function renderNav(probe) {
+        const card = document.getElementById("probe-card");
+        card.querySelectorAll(".nav").forEach((node) => node.remove());
+        const nav = el("div", "nav");
+        const previous = el("button", "", "← Previous");
+        previous.disabled = state.index === 0 || state.probes.length === 0;
+        previous.addEventListener("click", () => {
+          state.index = Math.max(0, state.index - 1);
+          state.selected = null;
+          state.feedback = null;
+          render();
+        });
+        const next = el("button", "", "Next probe →");
+        next.disabled = state.index >= state.probes.length - 1;
+        next.addEventListener("click", () => {
+          state.index = Math.min(state.probes.length - 1, state.index + 1);
+          state.selected = null;
+          state.feedback = null;
+          render();
+        });
+        nav.appendChild(previous);
+        nav.appendChild(next);
+        card.appendChild(nav);
+      }
+
+      async function submitAnswer(probe, answerIndex) {
+        if (state.busy || answerIndex === null) return;
+        state.busy = true;
+        renderProbe();
+        try {
+          const result = await api("/api/answer", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ probe_id: probe.id, answer_index: answerIndex }),
+          });
+          state.feedback = {
+            correct: result.correct,
+            retry_allowed: result.retry_allowed,
+            evidence_line: result.evidence_line,
+            evidence_text: result.evidence_text,
+            answer_index: answerIndex,
+          };
+          const status = statusOf(probe.id);
+          state.probeStatus.set(probe.id, {
+            ...status,
+            attempts: result.attempts,
+            correct: result.correct,
+            locked: !result.correct && !result.retry_allowed,
+          });
+          const coverage = await api("/api/coverage");
+          applyCoverage(coverage);
+          state.selected = null;
+          render();
+          markEvidence(probe.hunk_id, result.evidence_line, result.evidence_text);
+        } catch (error) {
+          toast(error instanceof Error ? error.message : String(error), true);
+        } finally {
+          state.busy = false;
+          if (state.coverage) applyCoverage(state.coverage);
+          renderProbe();
+        }
+      }
+
+      async function sealNow() {
+        if (state.busy) return;
+        state.busy = true;
+        const button = document.getElementById("seal");
+        button.disabled = true;
+        try {
+          const result = await api("/api/seal", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: "{}",
+          });
+          state.sealed = result;
+          applyCoverage(state.coverage);
+          renderProbe();
+          toast(
+            `Sealed ${result.coverage.covered}/${result.coverage.total} hunks → ${result.path} (digest ${String(
+              result.digest || "",
+            ).slice(0, 12)}…)`,
+          );
+        } catch (error) {
+          toast(error instanceof Error ? error.message : String(error), true);
+        } finally {
+          state.busy = false;
+          if (state.coverage) applyCoverage(state.coverage);
+        }
+      }
+
+      function render() {
+        renderMeta();
+        renderDiff();
+        renderProbe();
+      }
+
+      async function boot() {
+        try {
+          const [diff, probes, coverage] = await Promise.all([
+            api("/api/diff"),
+            api("/api/probes"),
+            api("/api/coverage"),
+          ]);
+          state.diff = diff;
+          state.probes = probes.probes || [];
+          applyCoverage(coverage);
+          state.index = pickStartIndex();
+          document.getElementById("seal").addEventListener("click", sealNow);
+          render();
+        } catch (error) {
+          toast(error instanceof Error ? error.message : String(error), true);
+        }
+      }
+
+      boot();
+    </script>
+  </body>
+</html>

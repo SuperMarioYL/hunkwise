@@ -1,0 +1,203 @@
+{
+  "schema": "hunkwise/demo-results@1",
+  "tool": "hunkwise",
+  "version": "0.1.0",
+  "recorded_at": "2026-11-23T22:32:38Z",
+  "environment": {
+    "os": "darwin 27.2.0 arm64",
+    "node": "v22.23.1",
+    "npm": "10.9.8",
+    "git": "2.54.0",
+    "asciinema": "3.2.0"
+  },
+  "cast": {
+    "path": "docs/demo.cast",
+    "format": "asciicast-v2",
+    "duration_seconds": 11.71,
+    "width": 96,
+    "height": 30,
+    "idle_time_limit": 1,
+    "recorder": "docs/record-demo.sh",
+    "note": "Every command and output line in the cast was produced by the packed 0.1.0 build. Answers are submitted with the same POST /api/answer the workbench sends, so the run is scriptable in a terminal recording."
+  },
+  "fixture": {
+    "repository": "acme-service",
+    "base": "origin/main",
+    "remote": "local bare repository acting as origin",
+    "branch_reviewed": "agent/checkout",
+    "branch_unreviewed": "agent/checkout-legacy",
+    "head_reviewed": "3f79732815f8d46b824b873a7586e48acdad7bcb",
+    "head_unreviewed": "f00f1ada6a4572bba471b3e72bcd4f0b12fc56ce",
+    "reviewer": "reviewer@acme.test",
+    "note": "Synthetic names and a synthetic reviewer identity; the repository is created from scratch by docs/record-demo.sh in a temp directory, so commit ids differ on every recording."
+  },
+  "steps": [
+    {
+      "command": "npx hunkwise init",
+      "exit": 0,
+      "observed": [
+        "initialized .hunkwise (base origin/main)",
+        "  config: .hunkwise/config.json created",
+        "  key: .hunkwise/key created (32 bytes, mode 0600)",
+        "  .gitignore: .hunkwise/ already ignored"
+      ]
+    },
+    {
+      "command": "npx hunkwise diff --base origin/main",
+      "exit": 0,
+      "observed": [
+        "HUNK                     FACTS               FINGERPRINT   EXEMPT",
+        "-----------------------  ------------------  ------------  --------",
+        "package-lock.json:12-14  -                   6423404c9341  lockfile",
+        "package-lock.json:45-47  -                   437cc0f047d0  lockfile",
+        "src/api/handler.ts:3-3   -                   6ca2e53878df  no_fact",
+        "src/api/handler.ts:5-8   new_branch          a5787c4cc0f7  -",
+        "src/auth/errors.ts:5-5   error_path_changed  e7a3b31ff628  -",
+        "src/auth/session.ts:7-9  guard_removed       c98bb1f8f548  -",
+        "6 hunks, 3 exempt, 4 facts written to .hunkwise/diff.json"
+      ]
+    },
+    {
+      "command": "npx hunkwise probes",
+      "exit": 0,
+      "observed": [
+        "4 probes over 3 hunks written to .hunkwise/probes.json"
+      ]
+    },
+    {
+      "command": "npx hunkwise review --base origin/main",
+      "exit": 0,
+      "observed": [
+        "6 hunks, 3 exempt, 4 probes",
+        "workbench: http://127.0.0.1:4321 (loopback only; Ctrl+C to stop)"
+      ]
+    },
+    {
+      "command": "POST /api/answer (4 probes, first attempt each)",
+      "exit": 0,
+      "observed": [
+        "src/api/handler.ts:5-8#1  correct=true",
+        "src/api/handler.ts:5-8#2  correct=true",
+        "src/auth/errors.ts:5-5#1  correct=true",
+        "src/auth/session.ts:7-9#1  correct=true",
+        "coverage 3/3 hunks, 3 exempt"
+      ]
+    },
+    {
+      "command": "npx hunkwise status",
+      "exit": 0,
+      "observed": [
+        "3/3 hunks covered (100%), 3 exempt, 4 probes"
+      ]
+    },
+    {
+      "command": "npx hunkwise attest",
+      "exit": 0,
+      "observed": [
+        "sealed 3/3 hunks (100%), 3 exempt",
+        "reviewer: reviewer@acme.test",
+        "record: .hunkwise/attestations/3f79732815f8d46b824b873a7586e48acdad7bcb.json"
+      ]
+    },
+    {
+      "command": "npx hunkwise verify --base origin/main",
+      "exit": 0,
+      "observed": [
+        "covered 3/3 hunks for 3f79732815f8 (3 exempt)"
+      ]
+    },
+    {
+      "command": "npx hunkwise install-hook",
+      "exit": 0,
+      "observed": [
+        "installed pre-push hook at .git/hooks/pre-push",
+        "it runs: /Users/yulei/.hermes/node/bin/node /private/var/folders/y6/1gqlrpy15xx2k5l_cksbsfd80000gn/T/hunkwise-demo/acme-service/node_modules/hunkwise/dist/cli.js verify-push --base origin/main for every pushed commit"
+      ]
+    },
+    {
+      "command": "git switch agent/checkout-legacy && npx hunkwise diff --base origin/main",
+      "exit": 0,
+      "observed": [
+        "HUNK                     FACTS               FINGERPRINT   EXEMPT",
+        "-----------------------  ------------------  ------------  ------",
+        "src/auth/errors.ts:5-5   error_path_changed  e7a3b31ff628  -",
+        "src/auth/session.ts:7-9  guard_removed       c98bb1f8f548  -",
+        "2 hunks, 0 exempt, 2 facts written to .hunkwise/diff.json"
+      ]
+    },
+    {
+      "command": "POST /api/answer (only the session.ts probe)",
+      "exit": 0,
+      "observed": [
+        "src/auth/session.ts:7-9#1 correct=true",
+        "coverage 1/2 hunks"
+      ]
+    },
+    {
+      "command": "npx hunkwise attest",
+      "exit": 0,
+      "observed": [
+        "sealed 1/2 hunks (50%), 0 exempt",
+        "record: .hunkwise/attestations/f00f1ada6a4572bba471b3e72bcd4f0b12fc56ce.json"
+      ]
+    },
+    {
+      "command": "npx hunkwise verify --base origin/main",
+      "exit": 1,
+      "observed": [
+        "hunkwise: 1/2 non-exempt hunks are uncovered",
+        "  src/auth/errors.ts:5-5  not covered"
+      ]
+    },
+    {
+      "command": "git push origin agent/checkout-legacy",
+      "exit": 1,
+      "observed": [
+        "hunkwise: refs/heads/agent/checkout-legacy (f00f1ada6a45) has 1/2 non-exempt hunks uncovered",
+        "  src/auth/errors.ts:5-5  not covered",
+        "hunkwise: push rejected; answer the probes and seal before pushing again.",
+        "error: failed to push some refs to '/var/folders/y6/1gqlrpy15xx2k5l_cksbsfd80000gn/T//hunkwise-demo/origin.git'"
+      ]
+    }
+  ],
+  "numbers": {
+    "reviewed_branch": {
+      "hunks_total": 6,
+      "hunks_gradable": 3,
+      "hunks_exempt": 3,
+      "exempt_reasons": {
+        "lockfile": 2,
+        "no_fact": 1
+      },
+      "facts": 4,
+      "probes": 4,
+      "coverage": {
+        "total": 3,
+        "covered": 3,
+        "exempt": 3,
+        "ratio": 1
+      }
+    },
+    "unreviewed_branch": {
+      "hunks_total": 2,
+      "hunks_gradable": 2,
+      "hunks_exempt": 0,
+      "probes": 2,
+      "coverage": {
+        "total": 2,
+        "covered": 1,
+        "exempt": 0,
+        "ratio": 0.5
+      },
+      "uncovered_hunk": "src/auth/errors.ts:5-5"
+    }
+  },
+  "limitations": [
+    "The cast is a real terminal run; the browser workbench is represented by the same POST /api/answer calls the page makes, not by a screen recording of the page.",
+    "The demo repository is synthetic and created in a temp directory; it is not a real product repository.",
+    "The reviewer identity is synthetic (reviewer@acme.test).",
+    "Commit ids and absolute paths (node, repository, origin) belong to this recording and change on every re-record.",
+    "verify is a local command and the pre-push hook can be bypassed with git push --no-verify; v0.1 makes no server-side enforcement claim.",
+    "Only the four text-level fact kinds in docs/GRADING.md are graded; a behavioral change outside them is exempt as no_fact."
+  ]
+}
